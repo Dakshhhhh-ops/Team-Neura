@@ -1,32 +1,28 @@
-// routes/lands.js
 import express from "express";
-import { Land } from "../models/Land.js";   // ✅ use shared model
+import { Land } from "../models/Land.js";
 
 const router = express.Router();
 
-// ✅ Fetch all lands by wallet address
+// ✅ Get all lands by wallet
 router.get("/:address", async (req, res) => {
   try {
-    const { address } = req.params;
-    const lands = await Land.find({ wallet_address: address });
+    const lands = await Land.find({ wallet_address: req.params.address });
     res.json(lands);
   } catch (err) {
-    console.error("Database query error:", err.message);
+    console.error("Fetch error:", err.message);
     res.status(500).json({ error: "Failed to fetch lands" });
   }
 });
 
-// ✅ Create a new land record
+// ✅ Create or update land (optionally with tx hash)
 router.post("/", async (req, res) => {
   try {
-    const { wallet_address, file_name, cid, hex_string } = req.body;
-
-    const newLand = new Land({ wallet_address, file_name, cid, hex_string });
-    await newLand.save();
-
+    const { wallet_address, file_name, cid, hex_string, transaction_hash, land_id } = req.body;
+    const land = new Land({ wallet_address, file_name, cid, hex_string, transaction_hash, land_id });
+    await land.save();
     res.json({ success: true, message: "Land saved successfully!" });
   } catch (err) {
-    console.error("Database insert error:", err.message);
+    console.error("Insert error:", err.message);
     res.status(500).json({ error: "Failed to save land" });
   }
 });

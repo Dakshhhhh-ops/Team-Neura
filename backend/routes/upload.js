@@ -3,24 +3,12 @@ import multer from "multer";
 import axios from "axios";
 import FormData from "form-data";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import { bufferToHex } from "../utils/hex.js";
+import { Land } from "../models/Land.js"; // ✅ shared model
 
 dotenv.config();
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
-
-// ✅ Define a simple schema for uploaded files
-const landSchema = new mongoose.Schema({
-  wallet_address: { type: String, required: true },
-  file_name: { type: String, required: true },
-  cid: { type: String, required: true },
-  hex_string: { type: String, required: true },
-  uploaded_at: { type: Date, default: Date.now },
-});
-
-// Create model if it doesn’t already exist
-const Land = mongoose.models.Land || mongoose.model("Land", landSchema);
 
 // ✅ Test route
 router.get("/test", (req, res) => {
@@ -61,6 +49,8 @@ router.post("/", upload.single("file"), async (req, res) => {
       file_name: file.originalname,
       cid,
       hex_string: hexString,
+      transaction_hash: req.body.transaction_hash || null, // optional
+      land_id: req.body.land_id || null,                   // optional
     });
 
     await newLand.save();
