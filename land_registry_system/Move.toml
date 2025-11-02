@@ -1,0 +1,10 @@
+[package]
+name = "LandSystem"
+version = "1.0.0"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework", rev = "testnet" }
+
+[addresses]
+# This placeholder is the only thing we need.
+registry_addr = "_"
